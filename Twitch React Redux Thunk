@@ -1,0 +1,188 @@
+const thunk = window.ReduxThunk.default; // codepen
+const { applyMiddleware, createStore } = Redux;
+const { connect, Provider } = ReactRedux;
+
+const LOADING = "LOADING";
+const ERROR = "ERROR";
+const RESPONSE = "RESPONSE";
+
+const isLoading = (bool) => {
+  return {
+    type: LOADING,
+    loading: bool
+  }
+}
+
+const isError = (bool) => {
+  return {
+    type: ERROR,
+    err: bool
+  }
+}
+
+const isResponse = (twitch) => {
+  return {
+    type: RESPONSE,
+    twitch
+  }
+}
+
+function fetchD(){
+  return (dispatch) => {
+    dispatch(isLoading(true));    
+      const promStream = fetch("https://api-express.glitch.me/streams")
+                  .then(res => res.json())
+      const promChannel = fetch("https://api-express.glitch.me/channels")
+                  .then(res => res.json())
+  
+    Promise.all([promStream, promChannel])
+            .then(res =>{
+      console.log(res[0])
+      dispatch(isLoading(false));
+      let arr = []; 
+      for(let item1 of res[0]){
+          
+          if(item1.stream === undefined){
+            arr.push({channel: "undefined"});
+
+          }else if(item1.stream === null){ 
+             for(let item of res[1]){ // if no stream but need name
+                if(item._links.self === item1._links.channel){// if the same channel 
+                  arr.push({channel: `https://www.twitch.tv/${item.name}`,
+                            stream: "offline",
+                            name: item.display_name,
+                            logo: item.logo
+                           })
+                  }
+              }
+          }else{
+            arr.push({channel: `https://www.twitch.tv/${ 
+                         item1.stream.channel.display_name}`,
+                      self: item1._links.self, // not available without api
+                      stream: "online",
+                      name: item1.stream.channel.display_name,
+                      game: item1.stream.game,
+                      logo: item1.stream.channel.logo,
+                      video_banner: item1.stream.channel.video_banner,
+                      })
+          } 
+        
+        }
+       return arr
+      })
+      .then(result => dispatch(isResponse(result)))
+      .catch(() => dispatch(isError(true)))
+   }
+  }
+
+const defaultState = {
+  loading: false,
+  err: false,
+  twitch: []
+}
+
+const reducerData = (state = defaultState, action) => {
+  switch(action.type){
+    case "LOADING":
+      return{
+        loading: action.loading,
+        err: false,
+        twitch: []
+      }
+    case "ERROR":
+      return {
+        loading: false,
+        err: action.err,
+        twitch: []
+      }
+    case "RESPONSE":
+      return {
+        loading: false,
+        err: false,
+        twitch: action.twitch
+      }
+    default:
+      return state;
+  }
+}
+
+const store = createStore(reducerData, 
+                          applyMiddleware(thunk));
+
+class Twitch extends React.Component{
+  constructor(props){
+    super(props);
+  }
+ componentDidMount(){
+   this.props.fetchD();
+ }
+
+ render(){
+  if(this.props.err){
+    return <div>Error dowloading data</div>
+  }else if(this.props.loading){
+    return <div className="loading">Loading...</div>
+  }else{
+  return(
+    <div className="container">
+      <ul className="list">
+        {
+          this.props.twitch.map(item => {
+           return( 
+             <li className="item">
+               <h3>{item.name}</h3>
+               <a href={item.channel} 
+                  title={item.name}
+                  target="_blank">
+                 <img className="image" 
+                      src={item.logo} 
+                      width="60" alt="logo" />
+                </a>  
+               <p className={item.stream}>
+                 {item.stream} 
+               </p>
+               <p className="game">{item.game}
+                 <span className="banner">
+                    {
+                      item.video_banner ? 
+                        <a href={item.self} 
+                           title={item.game}
+                           target="_blank">
+                          <img src={item.video_banner} 
+                               alt={item.game}
+                               width="60"/>
+                        </a>: ''
+                    }
+                 </span>
+              </p>
+             </li>
+             )
+          })
+        }
+      </ul>
+    </div>
+  )
+  }
+  }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    loading: state.loading,
+    err: state.err,
+    twitch: state.twitch
+  }
+}
+const mapDispatchToProps = (dispatch) =>{
+  return {
+    fetchD: () => dispatch(fetchD())
+  }
+}
+
+const Container = connect(mapStateToProps, 
+                          mapDispatchToProps)(Twitch);
+
+const root = document.getElementById("root");
+ReactDOM.render(<Provider store={store}>
+                  <Container />
+                </Provider>, root)
