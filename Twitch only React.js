@@ -3,8 +3,11 @@ const {useState, useEffect} = React;
 
 function Twitch(){
   const [twitch, setTwitch] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isError, setError] = useState(false);
   
   useEffect(()=>{
+
     const promStream= fetch("https://api-express.glitch.me/streams")
       .then(res => res.json())
       .catch(err => console.error(err))
@@ -39,18 +42,22 @@ function Twitch(){
                     })
         }  
       }
-    addItem(arr)
+    return arr
     })
+    .then(res => {
+    setLoading(false)
+    setTwitch(res)
+    })
+    .catch(() => setError(true));
   }, [twitch]);
   
-  function addItem(data){
-    if(twitch[0] === undefined){ // if empty array
-      setTwitch(data)
-    } 
-  }
- 
-  return(
-    <div className="container">
+   if(isError){
+      return <div>Error loading Data</div>
+    }else if(loading){
+      return <div className="loading"> Loading... </div>
+    }else {
+     return(
+      <div className="container">
       <ul className="list">
         {
           twitch.map(item => {
@@ -88,6 +95,7 @@ function Twitch(){
       </ul>
     </div>
   )
+ }
 }
 
 ReactDOM.render(<Twitch/>, document.getElementById("root"))
