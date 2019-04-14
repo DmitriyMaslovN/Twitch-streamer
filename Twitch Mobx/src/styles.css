@@ -1,0 +1,128 @@
+:root {
+  --of-online-size: 20px;
+  --padding-left: 10%;
+  --display-none: none;
+  --button-radius: 10px;
+  --but-outline: none;
+  --height-but: 25px;
+  --but-width: 30px;
+}
+
+body {
+  background-color: hsla(200, 49%, 46%, 0.4);
+}
+
+.App {
+}
+
+.container {
+  margin-left: 17%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+.list {
+}
+
+.item {
+  list-style: none;
+  width: 500px;
+  padding: 2px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+}
+
+.online-item {
+  background: hsla(200, 50%, 50%, 0.5);
+}
+
+.offline-item {
+  background: hsla(340, 50%, 50%, 0.4);
+}
+
+.online-item.on-none {
+  display: var(--display-none);
+}
+.offline-item.of-none {
+  display: var(--display-none);
+}
+
+h1 {
+  padding-left: 160px;
+}
+
+h3 {
+  padding-left: 5%;
+}
+
+.offline {
+  padding-left: var(--padding-left);
+  font-size: var(--of-online-size);
+}
+
+.online {
+  padding-left: 30%;
+  margin-top: -20px;
+  font-size: var(--of-online-size);
+}
+
+.game {
+  font-size: var(--of-online-size);
+  padding-left: var(--padding-left);
+}
+
+.image {
+  margin-left: var(--padding-left);
+  border-radius: 50%;
+  width: 80px;
+}
+
+.banner {
+  margin-left: var(--padding-left);
+  border-radius: 10px;
+  width: 60px;
+}
+
+.buttons {
+  padding-left: 315px;
+}
+
+.on-but {
+  border-radius: var(--button-radius);
+  background: hsl(100, 44%, 61%);
+  border: 2px solid hsl(100, 54%, 31%);
+  outline: var(--but-outline);
+  height: var(--height-but);
+}
+
+.off-but {
+  border-radius: var(--button-radius);
+  background: hsl(10, 44%, 61%);
+  border: 2px solid hsl(10, 44%, 31%);
+  outline: var(--but-outline);
+  height: var(--height-but);
+}
+
+.all-but {
+  border-radius: var(--button-radius);
+  background: linear-gradient(90deg, hsl(100, 68%, 62%), hsl(10, 44%, 61%));
+  border: 2px solid hsl(100, 44%, 31%);
+  outline: var(--but-outline);
+  height: var(--height-but);
+}
+
+.on-but:hover {
+}
+.off-but:hover {
+}
+
+.fa-circle {
+  background: linear-gradient(90deg, hsl(100, 94%, 71%), hsl(0, 96%, 51%));
+  border-radius: 50%;
+}
+
+.description {
+  padding-left: 10px;
+  font-size: 17px;
+}
