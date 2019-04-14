@@ -1,0 +1,70 @@
+import React from "react";
+import { useState } from "react"; // ofcourse we understand that has one store mobx
+import store from "./Store";
+
+const Buttons = () => {
+  const [label, setLabel] = useState({
+    online: "none",
+    offline: "none",
+    all: "none"
+  });
+  const handleClick = e => {
+    if (e.currentTarget.value === "online") {
+      store.display = "of-none";
+    } else if (e.currentTarget.value === "offline") {
+      store.display = "on-none";
+    } else {
+      store.display = "";
+    }
+  };
+  const handleOver = e => {
+    if (e.currentTarget.value === "online") {
+      setLabel({ ...label, online: "" });
+    } else if (e.currentTarget.value === "offline") {
+      setLabel({ ...label, offline: "" });
+    } else if (e.currentTarget.value === "all") {
+      setLabel({ ...label, all: "" });
+    }
+  };
+
+  return (
+    <div className="buttons">
+      <button
+        className="all-but"
+        onClick={handleClick}
+        onMouseOver={handleOver}
+        value="all"
+      >
+        <i className="far fa-circle" />
+        <span style={{ display: label.all }}> ALL</span>
+      </button>
+      <button
+        className="on-but"
+        onClick={handleClick}
+        onMouseOver={handleOver}
+        value="online"
+      >
+        <i
+          className="far fa-check-circle"
+          style={{ background: "hsl(100, 95%, 60%)", borderRadius: "50%" }}
+        />
+        <span style={{ display: label.online }}> ONLINE</span>
+      </button>
+      <button
+        className="off-but"
+        onClick={handleClick}
+        onMouseOver={handleOver}
+        value="offline"
+      >
+        {" "}
+        <i
+          className="far fa-stop-circle"
+          style={{ background: "hsl(10, 100%, 60%)", borderRadius: "50%" }}
+        />
+        <span style={{ display: label.offline }}> OFFLINE</span>
+      </button>
+    </div>
+  );
+};
+
+export default Buttons;
